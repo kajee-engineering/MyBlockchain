@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+// ハッシュ化のライブラリをimport
+
 public class BlockChain {
 
     private ArrayList<Object> transactionPool;
@@ -29,6 +31,10 @@ public class BlockChain {
     public ArrayList<Object> getChain() {
         return chain;
     }
+
+    // ハッシュ化の関数 任意の文字列を渡してsha256のアルゴリムによってハッシュ化する
+    // ハッシュはブロックチェーンを構成するためのコアな技術
+    // TODO ストレッチングしていない
 
     public void pprint(ArrayList chain) {
         for (Object block : chain) {
