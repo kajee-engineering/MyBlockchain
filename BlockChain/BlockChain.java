@@ -9,9 +9,7 @@ import java.security.NoSuchAlgorithmException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 
-// ハッシュ化のライブラリをimport
 
 public class BlockChain {
 
@@ -35,12 +33,8 @@ public class BlockChain {
         transactionPool.clear();
     }
 
-    // ハッシュ化の関数 任意の文字列を渡してsha256のアルゴリムによってハッシュ化する
-    // ハッシュはブロックチェーンを構成するためのコアな技術
     public String hash(Map<String, Object> block)
     {
-        // ハッシュ化するデータを変換(object -> json -> byte)
-        // byteをforループしてハッシュ値を生成
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonString = objectMapper.writeValueAsString(block);
@@ -71,7 +65,7 @@ public class BlockChain {
             for (Map.Entry<String, Object> entry : block.entrySet()) {
                 System.out.println(entry.getKey() + ": " + entry.getValue());
             }
-            System.out.println("---------------------"); // Add a blank line between blocks for better readability
+            System.out.println("---------------------");
         }
     }
 }
