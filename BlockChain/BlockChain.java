@@ -29,6 +29,7 @@ public class BlockChain {
         block.put( "nonce:", nonce);
         block.put( "hash:", initHash);
 
+        // block を sort してから chain に追加
         chain.add(block);
         transactionPool.clear();
     }
@@ -56,6 +57,9 @@ public class BlockChain {
         }
     }
 
+    // TODO make transaction method
+    // public boolean addTransaction(String senderAddress, String recipientAddress, int Value)
+
     public List<Map<String, Object>> getChain() {
         return chain;
     }
@@ -65,6 +69,7 @@ public class BlockChain {
             for (Map.Entry<String, Object> entry : block.entrySet()) {
                 System.out.println(entry.getKey() + ": " + entry.getValue());
             }
+            // TODO if statement string == "transactions" の場合に見やすくする
             System.out.println("---------------------");
         }
     }
