@@ -1,41 +1,35 @@
 package BlockChain;
 
 import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.security.NoSuchAlgorithmException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 public class BlockChain {
 
     private ArrayList<Object> transactionPool;
-    private List<Map<String,Object>> chain;
+    private List<Map<String, Object>> chain;
 
     public BlockChain() {
         this.transactionPool = new ArrayList<>();
         this.chain = new ArrayList<>();
-        createBlock(0, "init hash");
+        createBlock(0, this.hash(new TreeMap<>()));
     }
 
-    public void createBlock(int nonce, String initHash) {
+    public void createBlock(int nonce, String previousHash) {
         Map<String, Object> block = new TreeMap<>();
         block.put("timestamp", System.currentTimeMillis());
         block.put("transactions", this.transactionPool);
-        block.put( "nonce:", nonce);
-        block.put( "hash:", initHash);
+        block.put("nonce:", nonce);
+        block.put("hash:", previousHash);
 
-        // block を sort してから chain に追加
         chain.add(block);
         this.transactionPool = new ArrayList<>();
     }
 
-    public String hash(Map<String, Object> block)
-    {
+    public String hash(Map<String, Object> block) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonString = objectMapper.writeValueAsString(block);
@@ -44,7 +38,7 @@ public class BlockChain {
             byte[] hashBytes = digest.digest(jsonString.getBytes());
 
             StringBuilder hexString = new StringBuilder();
-            for (byte b: hashBytes) {
+            for (byte b : hashBytes) {
                 String hex = Integer.toHexString(0xff & b);
                 if (hex.length() == 1) hexString.append('0');
                 hexString.append(hex);
@@ -59,18 +53,46 @@ public class BlockChain {
 
     // TODO make transaction method
     // public boolean addTransaction(String senderAddress, String recipientAddress, int Value)
+    public boolean addTransaction(
+            String senderAddress,
+            String recipientAddress,
+            int Value
+    ) {
+        Map<String, Object> transaction = new TreeMap<>();
+        transaction.put("senderAddress", senderAddress);
+        transaction.put("recipientAddress", recipientAddress);
+        transaction.put("Value", Value);
+
+        this.transactionPool.add(transaction);
+
+        return true;
+    }
 
     public List<Map<String, Object>> getChain() {
         return chain;
     }
 
     public void pprint(List<Map<String, Object>> chain) {
+        int blockindex = 0;
         for (Map<String, Object> block : chain) {
-            for (Map.Entry<String, Object> entry : block.entrySet()) {
-                System.out.println(entry.getKey() + ": " + entry.getValue());
+            System.out.println("========  Chain " + blockindex + "======================== ");
+            for (Map.Entry<String, Object> items : block.entrySet()) {
+                if (items.getKey().equals("transactions")) {
+                    System.out.println(items.getKey());
+                    List<Map<String, Object>> transactions = (List<Map<String, Object>>) items.getValue();
+                    for (Map<String, Object> transaction: transactions) {
+                        System.out.println("-------------------------- ");
+                        for (Map.Entry<String, Object> transactionEntry : transaction.entrySet()) {
+                            System.out.println(transactionEntry.getKey() + ": " + transactionEntry.getValue());
+                        }
+                    }
+                } else {
+                    System.out.println(items.getKey() + ": " + items.getValue());
+                }
             }
             // TODO if statement string == "transactions" の場合に見やすくする
             System.out.println("---------------------");
+            blockindex++;
         }
     }
 }
