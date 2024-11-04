@@ -23,7 +23,7 @@ public class BlockChain {
     }
 
     public void createBlock(int nonce, String initHash) {
-        Map<String, Object> block = new HashMap<>();
+        Map<String, Object> block = new TreeMap<>();
         block.put("timestamp", System.currentTimeMillis());
         block.put("transactions", this.transactionPool);
         block.put( "nonce:", nonce);
