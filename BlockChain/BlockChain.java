@@ -31,7 +31,7 @@ public class BlockChain {
 
         // block を sort してから chain に追加
         chain.add(block);
-        transactionPool.clear();
+        this.transactionPool = new ArrayList<>();
     }
 
     public String hash(Map<String, Object> block)
