@@ -1,5 +1,6 @@
 package BlockChain;
 
+import java.lang.reflect.Array;
 import java.security.MessageDigest;
 import java.util.*;
 import java.security.NoSuchAlgorithmException;
@@ -11,6 +12,7 @@ public class BlockChain {
 
     private ArrayList<Object> transactionPool;
     private List<Map<String, Object>> chain;
+    private final int mining_difficulty = 3;
 
     public BlockChain() {
         this.transactionPool = new ArrayList<>();
@@ -18,9 +20,12 @@ public class BlockChain {
         createBlock(0, this.hash(new TreeMap<>()));
     }
 
-    public void createBlock(int nonce, String previousHash) {
+    public void createBlock(
+            int nonce,
+            String previousHash
+    ) {
         Map<String, Object> block = new TreeMap<>();
-        block.put("timestamp", System.currentTimeMillis());
+        block.put("timestamp", System.nanoTime());
         block.put("transactions", this.transactionPool);
         block.put("nonce:", nonce);
         block.put("hash:", previousHash);
@@ -65,6 +70,57 @@ public class BlockChain {
 
         return true;
     }
+
+    // valid_poof を実装する
+    // mining_difficulty の数だけ、先頭に 0 が並んでいるかどうかを確認する
+    // transactions, nonce, previous_hash の配列を、hash を作成する
+    // hash の先頭が、mining_difficulty の数だけ 0 が並んでいるかどうかを確認する
+    // 並んでいたら true  並んでいなかったら false を返す
+    public boolean valid_proof(
+            ArrayList<Object> transactions,
+            Integer nonce,
+            String previous_hash
+            ) {
+        String guess_block = transactions.toString() + nonce.toString() + previous_hash;
+        String guess_hash = hash(Collections.singletonMap("guess_block", guess_block));
+        return guess_hash.substring(0, mining_difficulty).equals("0".repeat(mining_difficulty));
+    }
+
+    // TODO proof of work を実装する
+    // return nonce
+    // nonce は create_block の引数に渡す。パスワードのようなもの
+    // transactionPool には、transaction が入っている
+    // chain から最後の block を取得し、その block を hash 化する
+    // valid_proof が true になるまで、nonce をインクリメントする
+    // true になったら、nonce を返す
+    public Integer proofOfWork() {
+        ArrayList<Object> transactions = new ArrayList<>(this.transactionPool);
+        int lastindex = this.getChain().size() - 1;
+        String previous_hash = this.hash(this.getChain().get(lastindex));
+        int nonce = 0;
+        while (! valid_proof(transactions, nonce, previous_hash)) {
+            nonce++;
+        }
+        return nonce;
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public List<Map<String, Object>> getChain() {
         return chain;
