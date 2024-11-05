@@ -51,8 +51,6 @@ public class BlockChain {
         }
     }
 
-    // TODO make transaction method
-    // public boolean addTransaction(String senderAddress, String recipientAddress, int Value)
     public boolean addTransaction(
             String senderAddress,
             String recipientAddress,
