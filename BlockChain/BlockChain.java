@@ -90,7 +90,6 @@ public class BlockChain {
                     System.out.println(items.getKey() + ": " + items.getValue());
                 }
             }
-            // TODO if statement string == "transactions" の場合に見やすくする
             System.out.println("---------------------");
             blockindex++;
         }
