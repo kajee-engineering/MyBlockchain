@@ -1,23 +1,9 @@
 package BlockChain;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class Util {
-    // TreeMapを使ってソートされたコレクションを返しているため不要になった関数
-    public static List<Map<String, Object>> sortedCollectionByKey(List<Map<String, Object>> unsortedCollection) {
-       List<Map<String, Object>> sortedCollection = new ArrayList<>();
-
-       for (Map<String, Object> targetMap: unsortedCollection) {
-           Map<String, Object> sortedMap = new TreeMap<>(targetMap);
-           sortedCollection.add(sortedMap);
-       }
-
-       return sortedCollection;
-    }
-
     public static void pprint(List<Map<String, Object>> chain) {
         int blockindex = 0;
         for (Map<String, Object> block : chain) {
