@@ -1,6 +1,5 @@
 package BlockChain;
 
-import java.lang.reflect.Array;
 import java.security.MessageDigest;
 import java.util.*;
 import java.security.NoSuchAlgorithmException;
@@ -71,11 +70,6 @@ public class BlockChain {
         return true;
     }
 
-    // valid_poof を実装する
-    // mining_difficulty の数だけ、先頭に 0 が並んでいるかどうかを確認する
-    // transactions, nonce, previous_hash の配列を、hash を作成する
-    // hash の先頭が、mining_difficulty の数だけ 0 が並んでいるかどうかを確認する
-    // 並んでいたら true  並んでいなかったら false を返す
     public boolean valid_proof(
             ArrayList<Object> transactions,
             Integer nonce,
@@ -86,13 +80,6 @@ public class BlockChain {
         return guess_hash.substring(0, mining_difficulty).equals("0".repeat(mining_difficulty));
     }
 
-    // TODO proof of work を実装する
-    // return nonce
-    // nonce は create_block の引数に渡す。パスワードのようなもの
-    // transactionPool には、transaction が入っている
-    // chain から最後の block を取得し、その block を hash 化する
-    // valid_proof が true になるまで、nonce をインクリメントする
-    // true になったら、nonce を返す
     public Integer proofOfWork() {
         ArrayList<Object> transactions = new ArrayList<>(this.transactionPool);
         int lastindex = this.getChain().size() - 1;
