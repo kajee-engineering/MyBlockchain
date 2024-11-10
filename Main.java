@@ -1,25 +1,27 @@
 import BlockChain.BlockChain;
-
-import java.util.Map;
+import BlockChain.Util;
+import BlockChain.Wallet;
 
 public class Main {
-    public static void main(String[] args) {
-        BlockChain blockchain = new BlockChain();
+    public static void main(String[] args) throws Exception {
+        BlockChain blockchain = new BlockChain("my blockchain address");
 
-        blockchain.addTransaction("Alice", "Bob", 100);
-        int lastindex = blockchain.getChain().size() - 1;
-        String previous_hash = blockchain.hash(blockchain.getChain().get(lastindex));
-        Integer nonce = blockchain.proofOfWork();
+        blockchain.addTransaction("Alice", "Bob", 100); // 大福帳に記録される
+        blockchain.mining();
 
-        blockchain.createBlock(nonce, previous_hash);
+        blockchain.addTransaction("Bob", "Alice", 50); // 大福帳に記録される
+        blockchain.addTransaction("Alice", "Bob", 100); // 大福帳に記録される
+        blockchain.mining();
 
-        blockchain.addTransaction("Bob", "Alice", 50);
-        blockchain.addTransaction("Alice", "Bob", 100);
-        int lastindex2 = blockchain.getChain().size() - 1;
-        String previous_hash2 = blockchain.hash(blockchain.getChain().get(lastindex2));
-        Integer nonce2 = blockchain.proofOfWork();
-        blockchain.createBlock(nonce2,  previous_hash2);
+        Util.pprint(blockchain.getChain()); // 大福帳の内容を表示する
 
-        blockchain.pprint(blockchain.getChain());
+        System.out.println(blockchain.calculateTotalAmount("my blockchain address"));
+
+       Wallet result = new Wallet();
+       System.out.println(result.getPrivateKey());
+        System.out.println(result.getPublicKey());
+
+
+
         }
 }

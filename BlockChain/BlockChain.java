@@ -9,14 +9,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BlockChain {
 
-    private ArrayList<Object> transactionPool;
     private List<Map<String, Object>> chain;
-    private final int mining_difficulty = 3;
+    private ArrayList<Object> transactionPool;
+    private final String blockchainAddress;
 
-    public BlockChain() {
+    private final Integer MINING_DIFFICULTY = 3;
+    private final String MINING_SENDER = "THE BLOCKCHAIN";
+    private final double MINING_REWARD = 1.0;
+
+    public BlockChain(String blockchainAddress) {
         this.transactionPool = new ArrayList<>();
         this.chain = new ArrayList<>();
         createBlock(0, this.hash(new TreeMap<>()));
+        this.blockchainAddress = blockchainAddress;
     }
 
     public void createBlock(
@@ -26,8 +31,8 @@ public class BlockChain {
         Map<String, Object> block = new TreeMap<>();
         block.put("timestamp", System.nanoTime());
         block.put("transactions", this.transactionPool);
-        block.put("nonce:", nonce);
-        block.put("hash:", previousHash);
+        block.put("nonce", nonce);
+        block.put("hash", previousHash);
 
         chain.add(block);
         this.transactionPool = new ArrayList<>();
@@ -55,10 +60,10 @@ public class BlockChain {
         }
     }
 
-    public boolean addTransaction(
+    public void addTransaction(
             String senderAddress,
             String recipientAddress,
-            int Value
+            double Value
     ) {
         Map<String, Object> transaction = new TreeMap<>();
         transaction.put("senderAddress", senderAddress);
@@ -66,18 +71,16 @@ public class BlockChain {
         transaction.put("Value", Value);
 
         this.transactionPool.add(transaction);
-
-        return true;
     }
 
-    public boolean valid_proof(
+    public boolean validProof(
             ArrayList<Object> transactions,
             Integer nonce,
             String previous_hash
             ) {
         String guess_block = transactions.toString() + nonce.toString() + previous_hash;
         String guess_hash = hash(Collections.singletonMap("guess_block", guess_block));
-        return guess_hash.substring(0, mining_difficulty).equals("0".repeat(mining_difficulty));
+        return guess_hash.substring(0, MINING_DIFFICULTY).equals("0".repeat(MINING_DIFFICULTY));
     }
 
     public Integer proofOfWork() {
@@ -85,54 +88,46 @@ public class BlockChain {
         int lastindex = this.getChain().size() - 1;
         String previous_hash = this.hash(this.getChain().get(lastindex));
         int nonce = 0;
-        while (! valid_proof(transactions, nonce, previous_hash)) {
+        while (! validProof(transactions, nonce, previous_hash)) {
             nonce++;
         }
         return nonce;
 
     }
 
+    public void mining() {
+        this.addTransaction(
+                MINING_SENDER,
+                this.blockchainAddress,
+                MINING_REWARD
+        );
+        int nonce;
+        nonce = this.proofOfWork();
+        int lastIndex = this.getChain().size() - 1;
+        String previousHash = this.hash(this.getChain().get(lastIndex));
+        this.createBlock(nonce, previousHash);
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public double calculateTotalAmount(String blockchainAddress) {
+        double totalAmount = 0;
+        for (Map<String, Object> block : this.chain) {
+            List<Map<String, Object>> transactions = (List<Map<String, Object>>) block.get("transactions");
+            if (transactions != null) {
+                for (Map<String, Object> transaction : transactions) {
+                    if (transaction.get("senderAddress").equals(blockchainAddress)) {
+                        totalAmount -= (double) transaction.get("Value");
+                    }
+                    if (transaction.get("recipientAddress").equals(blockchainAddress)) {
+                        totalAmount += (double) transaction.get("Value");
+                    }
+                }
+            }
+        }
+        return totalAmount;
+    }
 
 
     public List<Map<String, Object>> getChain() {
         return chain;
-    }
-
-    public void pprint(List<Map<String, Object>> chain) {
-        int blockindex = 0;
-        for (Map<String, Object> block : chain) {
-            System.out.println("========  Chain " + blockindex + "======================== ");
-            for (Map.Entry<String, Object> items : block.entrySet()) {
-                if (items.getKey().equals("transactions")) {
-                    System.out.println(items.getKey());
-                    List<Map<String, Object>> transactions = (List<Map<String, Object>>) items.getValue();
-                    for (Map<String, Object> transaction: transactions) {
-                        System.out.println("-------------------------- ");
-                        for (Map.Entry<String, Object> transactionEntry : transaction.entrySet()) {
-                            System.out.println(transactionEntry.getKey() + ": " + transactionEntry.getValue());
-                        }
-                    }
-                } else {
-                    System.out.println(items.getKey() + ": " + items.getValue());
-                }
-            }
-            System.out.println("---------------------");
-            blockindex++;
-        }
     }
 }
